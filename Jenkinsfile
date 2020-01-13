@@ -213,11 +213,10 @@ spec:
 
 		    sleep 30
 		    i=$((sleep_countdown-1))
-		    if [ sleep_countdown=0 ]
-		    then
-			echo "Could not reach health endpoint: http://${INGRESS_HOST}:${PORT}/health"
+		    if [ sleep_countdown=0 ]; then
+		        echo "Could not reach health endpoint: http://${INGRESS_HOST}:${PORT}/health"
 			exit 1;
-		    
+		    fi
 		    done
 
                     echo "Successfully reached health endpoint: http://${INGRESS_HOST}:${PORT}/health"
