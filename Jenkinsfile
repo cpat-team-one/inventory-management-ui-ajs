@@ -204,17 +204,24 @@ spec:
                     INGRESS_NAME="${IMAGE_NAME}"
                     INGRESS_HOST=$(kubectl get ingress/${INGRESS_NAME} --namespace ${ENVIRONMENT_NAME} --output=jsonpath='{ .spec.rules[0].host }')
                     PORT='80'
+		    sleep_countdown=5
 
                     # sleep for 10 seconds to allow enough time for the server to start
-                    sleep 30
+		    while [ $(curl -sL -w "%{http_code}\\n" "http://${INGRESS_HOST}:${PORT}/health" -o /dev/null --connect-timeout 3 --max-time 5 --retry 3 --retry-max-time 30) != "200" 
+		    
+		    do
 
-                    if [ $(curl -sL -w "%{http_code}\\n" "http://${INGRESS_HOST}:${PORT}/health" -o /dev/null --connect-timeout 3 --max-time 5 --retry 3 --retry-max-time 30) == "200" ]; then
-                        echo "Successfully reached health endpoint: http://${INGRESS_HOST}:${PORT}/health"
+		    sleep 30
+		    i=$((sleep_countdown-1))
+		    if [ sleep_countdown=0 ]
+		    then
+			echo "Could not reach health endpoint: http://${INGRESS_HOST}:${PORT}/health"
+			exit 1;
+		    
+		    done
+
+                    echo "Successfully reached health endpoint: http://${INGRESS_HOST}:${PORT}/health"
                     echo "====================================================================="
-                        else
-                    echo "Could not reach health endpoint: http://${INGRESS_HOST}:${PORT}/health"
-                        exit 1;
-                    fi;
 
                 '''
             }
